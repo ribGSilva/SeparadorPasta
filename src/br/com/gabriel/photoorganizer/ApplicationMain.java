@@ -6,6 +6,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class ApplicationMain {
     public static final String FORMATTING_PATTERN = ".+\\..+\\..+\\..*";
@@ -16,8 +18,8 @@ public class ApplicationMain {
 
         String path = System.getProperty("user.dir");
         try {
-            Path rootPath = Paths.get(path).getParent();
-            Files.walk(rootPath)
+            Path rootPath = Paths.get(path);//.getParent();
+            List<Data> dataFiles = Files.walk(rootPath)
                     .filter(Files::isRegularFile)
                     .filter(it -> it.getFileName().toString().matches(FORMATTING_PATTERN))
                     .map(it -> {
@@ -30,24 +32,49 @@ public class ApplicationMain {
                         }};
                     })
                     .sorted(Comparator.comparing(it -> it.getPath().getFileName().toString()))
-                    .forEach(it -> {
-                        try {
-                            Path studentPath = Paths.get(path.concat("/").concat(it.getName()));
-                            if (Files.notExists(studentPath)) {
-                                Files.createDirectory(studentPath);
-                            }
-                            Path subjectPath = Paths.get(studentPath.toAbsolutePath().toString().concat("/").concat(it.getSubject()));
-                            if (Files.notExists(subjectPath)) {
-                                Files.createDirectory(subjectPath);
-                            }
-                            Path newFileLocation = Paths.get(subjectPath.toAbsolutePath().toString().concat("/").concat(it.getPath().getFileName().toString()));
-                            Files.copy(it.getPath(), newFileLocation);
-                        } catch (FileAlreadyExistsException e) {
-                            System.err.println("Arquivo ja existe: " + e.getMessage());
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    });
+                    .collect(Collectors.toList());
+
+            dataFiles.forEach(it -> {
+                try {
+                    Path studentPath = Paths.get(path.concat("/").concat(it.getName()));
+                    if (Files.notExists(studentPath)) {
+                        Files.createDirectory(studentPath);
+                    }
+                    Path subjectPath = Paths.get(studentPath.toAbsolutePath().toString().concat("/").concat(it.getSubject()));
+                    if (Files.notExists(subjectPath)) {
+                        Files.createDirectory(subjectPath);
+                    }
+                    Path newFileLocation = Paths.get(subjectPath.toAbsolutePath().toString().concat("/").concat(it.getPath().getFileName().toString()));
+                    Files.copy(it.getPath(), newFileLocation);
+                } catch (FileAlreadyExistsException e) {
+                    System.err.println("Arquivo ja existe: " + e.getMessage());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+
+            dataFiles.forEach(it -> {
+                try {
+                    Path datePath = Paths.get(path.concat("/").concat(it.getDate()));
+                    if (Files.notExists(datePath)) {
+                        Files.createDirectory(datePath);
+                    }
+                    Path subjectPath = Paths.get(datePath.toAbsolutePath().toString().concat("/").concat(it.getSubject()));
+                    if (Files.notExists(subjectPath)) {
+                        Files.createDirectory(subjectPath);
+                    }
+                    Path namePath = Paths.get(subjectPath.toAbsolutePath().toString().concat("/").concat(it.getName()));
+                    if (Files.notExists(namePath)) {
+                        Files.createDirectory(namePath);
+                    }
+                    Path newFileLocation = Paths.get(namePath.toAbsolutePath().toString().concat("/").concat(it.getPath().getFileName().toString()));
+                    Files.copy(it.getPath(), newFileLocation);
+                } catch (FileAlreadyExistsException e) {
+                    System.err.println("Arquivo ja existe: " + e.getMessage());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
 
             System.out.println("Finalizado");
 
