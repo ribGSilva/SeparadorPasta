@@ -1,4 +1,4 @@
-package br.com.gabriel.photoorganizer;
+package br.com.gabriel.organizador;
 
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
@@ -18,7 +18,8 @@ public class ApplicationMain {
 
         String path = System.getProperty("user.dir");
         try {
-            Path rootPath = Paths.get(path);//.getParent();
+            Path rootPath = Paths.get(path);
+            System.out.println("Escaneando pasta: " + rootPath.getFileName().toString());
             List<Data> dataFiles = Files.walk(rootPath)
                     .filter(Files::isRegularFile)
                     .filter(it -> it.getFileName().toString().matches(FORMATTING_PATTERN))

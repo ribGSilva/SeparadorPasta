@@ -1,4 +1,4 @@
-package br.com.gabriel.photoorganizer;
+package br.com.gabriel.renomeador;
 
 import java.io.Serializable;
 import java.nio.file.Path;
@@ -7,6 +7,7 @@ public class Data implements Serializable {
     private String date;
     private String subject;
     private String name;
+    private String extra;
     private Path path;
 
     public String getDate() {
@@ -31,6 +32,14 @@ public class Data implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getExtra() {
+        return extra;
+    }
+
+    public void setExtra(String extra) {
+        this.extra = extra;
     }
 
     public Path getPath() {
